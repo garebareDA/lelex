@@ -1,3 +1,5 @@
+pub mod lexers;
+
 #[cfg(test)]
 mod tests {
     #[test]
