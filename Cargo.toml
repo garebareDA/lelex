@@ -1,5 +1,5 @@
 [package]
-name = "Lelex"
+name = "lelex"
 version = "0.1.0"
 authors = ["garebare <garedaiki@outlook.jp>"]
 edition = "2018"

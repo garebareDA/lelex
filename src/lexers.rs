@@ -1,6 +1,4 @@
 extern crate regex;
-
-use std::io;
 use super::tokens;
 use regex::Regex;
 
