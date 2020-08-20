@@ -3,8 +3,10 @@ use super::tokens;
 use regex::Regex;
 
 pub struct Lexer {
-  reserved_word: tokens::TokenToIssue,
   pub tokens: tokens::TokenToIssue,
+  reserved_word: tokens::TokenToIssue,
+  between_word: tokens::TokenToIssue,
+  number_token: i64,
   value: String,
   index: usize,
 }
@@ -13,13 +15,15 @@ impl Lexer {
   pub fn new(value: &str) -> Self {
     Lexer {
       reserved_word: tokens::TokenToIssue::new(),
+      between_word: tokens::TokenToIssue::new(),
       tokens: tokens::TokenToIssue::new(),
       value: value.to_string(),
+      number_token: 0,
       index: 0,
     }
   }
 
-  pub fn run(&mut self)-> &tokens::TokenToIssue {
+  pub fn run(&mut self) -> &tokens::TokenToIssue {
     let len = self.value.len();
     loop {
       if self.index >= len {
@@ -53,33 +57,98 @@ impl Lexer {
       .to_string();
 
     let mut identifier_str: String = String::new();
-    let reg = Regex::new(r"[a-zA-Z]+").expect("Failed");
-    match reg.captures(&last_str) {
-      Some(_) => loop {
-        let text = &self
-          .value
-          .chars()
-          .nth(self.index)
-          .expect("Failed")
-          .to_string();
-        let reg = Regex::new(r"(\d|[a-zA-Z])+").expect("Failed");
-        let res = match reg.captures(text) {
-          Some(_) => true,
-          None => false,
-        };
-        if !res {
-          break;
-        }
 
-        identifier_str += text;
-        self.index += 1;
-        for token in self.reserved_word.get_tokens().iter() {
-          if identifier_str == token.get_value() {
-            return token.clone();
+    if !self.reserved_word.tokens.is_empty() {
+      let reg = Regex::new(r"[a-zA-Z]+").expect("Failed");
+      match reg.captures(&last_str) {
+        Some(_) => loop {
+          let text = &self
+            .value
+            .chars()
+            .nth(self.index)
+            .expect("Failed")
+            .to_string();
+          let reg = Regex::new(r"(\d|[a-zA-Z])+").expect("Failed");
+          let res = match reg.captures(text) {
+            Some(_) => true,
+            None => false,
+          };
+          if !res {
+            break;
           }
+
+          identifier_str += text;
+          self.index += 1;
+          for token in self.reserved_word.get_tokens().iter() {
+            if identifier_str == token.get_value() {
+              return token.clone();
+            }
+          }
+        },
+        None => {}
+      }
+    }
+
+    if !self.between_word.tokens.is_empty() {
+      for token in self.between_word.get_tokens().iter() {
+        let reg = Regex::new(&format!(r#"{}"#, token.value)).expect("Failed");
+        match reg.captures(&last_str) {
+          Some(_) => {
+            identifier_str = String::new();
+            loop {
+              self.index += 1;
+              let text = &self
+                .value
+                .chars()
+                .nth(self.index)
+                .expect("Failed")
+                .to_string();
+              if text != &token.value {
+                identifier_str += &text
+              }
+
+              if text == &token.value {
+                break;
+              }
+            }
+
+            self.index += 1;
+            let token_value = tokens::Tokens::new(token.token, &identifier_str);
+            return token_value;
+          }
+
+          None => {}
         }
-      },
-      None => {}
+      }
+    }
+
+    if self.number_token < 0 {
+      let reg = Regex::new(r"[0-9]+").expect("Faild");
+      match reg.captures(&last_str) {
+        Some(_) => {
+          loop {
+            let text = &self
+              .value
+              .chars()
+              .nth(self.index)
+              .expect("Failed")
+              .to_string();
+            let reg = Regex::new(r"[0-9.]+").expect("Faild");
+            let res = match reg.captures(text) {
+              Some(_) => true,
+              None => false,
+            };
+            if !res {
+              break;
+            }
+            identifier_str += text;
+            self.index += 1;
+          }
+          let token_value = tokens::Tokens::new(self.number_token, &identifier_str);
+          return token_value;
+        }
+        None => {}
+      };
     }
 
     let ascii_code = self
@@ -94,11 +163,28 @@ impl Lexer {
     return token_value;
   }
 
-  pub fn push_token(&mut self, token: i64, value: &str) -> Result<(), String> {
+  pub fn push_reserved_word(&mut self, token: i64, value: &str) -> Result<(), String> {
     if token > 0 {
       return Err("The argument must be a negative number".to_string());
     }
     self.reserved_word.push(token, value);
+    return Ok(());
+  }
+
+  pub fn push_between_ward(&mut self, token: i64, value: &str) -> Result<(), String> {
+    if token > 0 {
+      return Err("The argument must be a negative number".to_string());
+    }
+    self.between_word.push(token, value);
+    return Ok(());
+  }
+
+  pub fn set_number_token(&mut self, token: i64) -> Result<(), String> {
+    if token > 0 {
+      return Err("The argument must be a negative number".to_string());
+    }
+
+    self.number_token = token;
     return Ok(());
   }
 

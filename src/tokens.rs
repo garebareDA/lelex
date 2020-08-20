@@ -1,5 +1,5 @@
 pub struct TokenToIssue{
-  tokens:Vec<Tokens>
+  pub(crate) tokens:Vec<Tokens>
 }
 
 #[derive(Clone)]

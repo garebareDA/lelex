@@ -1,5 +1,5 @@
 pub mod lexers;
-pub(crate) mod tokens;
+pub mod tokens;
 
 #[cfg(test)]
 mod tests {
@@ -7,7 +7,7 @@ mod tests {
     #[test]
     fn lex_if(){
         let mut lex = lexers::Lexer::new("if");
-        lex.push_token(-1, "if").expect("Fail");
+        lex.push_reserved_word(-1, "if").expect("Fail");
         let result = lex.run();
         let tokens = result.get_tokens();
         assert_eq!(tokens[0].token, -1);
@@ -16,7 +16,7 @@ mod tests {
     #[test]
     fn error_test(){
         let mut lex = lexers::Lexer::new("if");
-        match lex.push_token(1, "if") {
+        match lex.push_reserved_word(1, "if") {
             Ok(()) => {
                 panic!("error handle faild");
             }
@@ -24,5 +24,15 @@ mod tests {
                 println!("{}", err);
             }
         }
+    }
+
+    #[test]
+    fn between(){
+        let mut lex = lexers::Lexer::new("\"if\"");
+        lex.push_between_ward(-1, "\"").expect("failed");
+        let result = lex.run();
+        let tokens = result.get_tokens();
+        assert_eq!(tokens[0].token, -1);
+        assert_eq!(tokens[0].value, "if");
     }
 }
