@@ -35,4 +35,22 @@ mod tests {
         assert_eq!(tokens[0].token, -1);
         assert_eq!(tokens[0].value, "if");
     }
+
+    #[test]
+    fn one(){
+        let mut lex = lexers::Lexer::new("#test");
+        lex.push_one_word(-1, "#").expect("Failed");
+        let result = lex.run();
+        let tokens = result.get_tokens();
+        assert_eq!(tokens[0].token, -1);
+    }
+
+    #[test]
+    fn number(){
+        let mut lex = lexers::Lexer::new("111");
+        lex.set_number_token(-1).expect("Failed");
+        let result = lex.run();
+        let tokens = result.get_tokens();
+        assert_eq!(tokens[0].token, -1);
+    }
 }

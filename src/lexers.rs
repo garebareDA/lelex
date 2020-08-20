@@ -6,6 +6,7 @@ pub struct Lexer {
   pub tokens: tokens::TokenToIssue,
   reserved_word: tokens::TokenToIssue,
   between_word: tokens::TokenToIssue,
+  one_word: tokens::TokenToIssue,
   number_token: i64,
   value: String,
   index: usize,
@@ -17,6 +18,7 @@ impl Lexer {
       reserved_word: tokens::TokenToIssue::new(),
       between_word: tokens::TokenToIssue::new(),
       tokens: tokens::TokenToIssue::new(),
+      one_word: tokens::TokenToIssue::new(),
       value: value.to_string(),
       number_token: 0,
       index: 0,
@@ -122,6 +124,32 @@ impl Lexer {
       }
     }
 
+    if !self.one_word.tokens.is_empty() {
+      for token in self.one_word.get_tokens().iter() {
+        let reg = Regex::new(&format!(r#"{}"#, token.value)).expect("Faild");
+        match reg.captures(&last_str) {
+          Some(_) => {
+            loop {
+              let text = &self
+                .value
+                .chars()
+                .nth(self.index)
+                .expect("Failed")
+                .to_string();
+              if text == "\n" {
+                break;
+              }
+              identifier_str += text;
+              self.index += 1;
+            }
+            let token_value = tokens::Tokens::new(token.token, &identifier_str);
+            return token_value;
+          }
+          None => {}
+        }
+      }
+    }
+
     if self.number_token < 0 {
       let reg = Regex::new(r"[0-9]+").expect("Faild");
       match reg.captures(&last_str) {
@@ -144,6 +172,7 @@ impl Lexer {
             identifier_str += text;
             self.index += 1;
           }
+
           let token_value = tokens::Tokens::new(self.number_token, &identifier_str);
           return token_value;
         }
@@ -185,6 +214,15 @@ impl Lexer {
     }
 
     self.number_token = token;
+    return Ok(());
+  }
+
+  pub fn push_one_word(&mut self, token: i64, value: &str) -> Result<(), String> {
+    if token > 0 {
+      return Err("The argument must be a negative number".to_string());
+    }
+
+    self.one_word.push(token, value);
     return Ok(());
   }
 
