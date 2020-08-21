@@ -7,6 +7,7 @@ pub struct Lexer {
   reserved_word: tokens::TokenToIssue,
   between_word: tokens::TokenToIssue,
   one_word: tokens::TokenToIssue,
+  other_ward_token: i64,
   number_token: i64,
   value: String,
   index: usize,
@@ -19,6 +20,7 @@ impl Lexer {
       between_word: tokens::TokenToIssue::new(),
       tokens: tokens::TokenToIssue::new(),
       one_word: tokens::TokenToIssue::new(),
+      other_ward_token: 0,
       value: value.to_string(),
       number_token: 0,
       index: 0,
@@ -60,10 +62,10 @@ impl Lexer {
 
     let mut identifier_str: String = String::new();
 
-    if !self.reserved_word.tokens.is_empty() {
-      let reg = Regex::new(r"[a-zA-Z]+").expect("Failed");
-      match reg.captures(&last_str) {
-        Some(_) => loop {
+    let reg = Regex::new(r"[a-zA-Z]+").expect("Failed");
+    match reg.captures(&last_str) {
+      Some(_) => {
+        loop {
           let text = &self
             .value
             .chars()
@@ -71,24 +73,37 @@ impl Lexer {
             .expect("Failed")
             .to_string();
           let reg = Regex::new(r"(\d|[a-zA-Z])+").expect("Failed");
+
           let res = match reg.captures(text) {
             Some(_) => true,
             None => false,
           };
+
           if !res {
             break;
           }
 
           identifier_str += text;
           self.index += 1;
+
+          if self.index >= len {
+            break;
+          }
+        }
+
+        if !self.reserved_word.get_tokens().is_empty() {
           for token in self.reserved_word.get_tokens().iter() {
             if identifier_str == token.get_value() {
               return token.clone();
             }
           }
-        },
-        None => {}
+        }
+
+        if self.other_ward_token < 0 {
+          return tokens::Tokens::new(self.other_ward_token, &identifier_str);
+        }
       }
+      None => {}
     }
 
     if !self.between_word.tokens.is_empty() {
@@ -137,14 +152,14 @@ impl Lexer {
                 .expect("Failed")
                 .to_string();
               let len = self.value.len();
-              if text == "\n"{
+              if text == "\n" {
                 break;
               }
 
               identifier_str += text;
               self.index += 1;
 
-              if self.index >= len{
+              if self.index >= len {
                 break;
               }
             }
@@ -173,14 +188,14 @@ impl Lexer {
               None => false,
             };
             let len = self.value.len();
-            if !res{
+            if !res {
               break;
             }
 
             identifier_str += text;
             self.index += 1;
 
-            if self.index >= len{
+            if self.index >= len {
               break;
             }
           }
@@ -226,6 +241,15 @@ impl Lexer {
     }
 
     self.number_token = token;
+    return Ok(());
+  }
+
+  pub fn set_other_token(&mut self, token: i64) -> Result<(), String> {
+    if token > 0 {
+      return Err("The argument must be a negative number".to_string());
+    }
+
+    self.other_ward_token = token;
     return Ok(());
   }
 
