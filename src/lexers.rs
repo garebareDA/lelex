@@ -3,7 +3,7 @@ use super::tokens;
 use regex::Regex;
 
 pub struct Lexer {
-  pub tokens: tokens::TokenToIssue,
+  tokens: tokens::TokenToIssue,
   reserved_word: tokens::TokenToIssue,
   between_word: tokens::TokenToIssue,
   one_word: tokens::TokenToIssue,

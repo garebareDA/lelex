@@ -9,7 +9,7 @@ pub struct Tokens{
 }
 
 impl TokenToIssue{
-  pub fn new() -> Self{
+  pub(crate) fn new() -> Self{
     TokenToIssue{
       tokens: Vec::new(),
     }
@@ -19,12 +19,12 @@ impl TokenToIssue{
     &self.tokens
   }
 
-  pub fn push(&mut self, token:i64, value:&str) {
+  pub(crate) fn push(&mut self, token:i64, value:&str) {
     let token = Tokens::new(token, value);
     self.tokens.push(token);
   }
 
-  pub fn tokens_push(&mut self, result :&Tokens){
+  pub(crate) fn tokens_push(&mut self, result :&Tokens){
     self.tokens.push(result.clone());
   }
 }
