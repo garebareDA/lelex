@@ -136,11 +136,17 @@ impl Lexer {
                 .nth(self.index)
                 .expect("Failed")
                 .to_string();
-              if text == "\n" {
+              let len = self.value.len();
+              if text == "\n"{
                 break;
               }
+
               identifier_str += text;
               self.index += 1;
+
+              if self.index >= len{
+                break;
+              }
             }
             let token_value = tokens::Tokens::new(token.token, &identifier_str);
             return token_value;
@@ -166,11 +172,17 @@ impl Lexer {
               Some(_) => true,
               None => false,
             };
-            if !res {
+            let len = self.value.len();
+            if !res{
               break;
             }
+
             identifier_str += text;
             self.index += 1;
+
+            if self.index >= len{
+              break;
+            }
           }
 
           let token_value = tokens::Tokens::new(self.number_token, &identifier_str);
