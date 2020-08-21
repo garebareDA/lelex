@@ -57,7 +57,7 @@ mod tests {
     #[test]
     fn other() {
         let mut lex = lexers::Lexer::new("test");
-        lex.set_other_token(-1).expect("Failed");
+        lex.set_other_token(-1).unwrap();
         let result = lex.run();
         let tokens = result.get_tokens();
         assert_eq!(tokens[0].token, -1);

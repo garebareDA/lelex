@@ -4,8 +4,8 @@ pub struct TokenToIssue{
 
 #[derive(Clone)]
 pub struct Tokens{
-  pub token: i64,
-  pub value:String
+  pub(crate) token: i64,
+  pub(crate) value:String
 }
 
 impl TokenToIssue{
@@ -37,7 +37,7 @@ impl Tokens{
     }
   }
 
-  pub fn get_tokens(&self) -> i64{
+  pub fn get_token(&self) -> i64{
     self.token
   }
 
