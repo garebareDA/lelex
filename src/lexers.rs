@@ -219,43 +219,43 @@ impl Lexer {
     return token_value;
   }
 
-  pub fn push_reserved_word(&mut self, token: i64, value: &str) -> Result<(), String> {
+  pub fn push_reserved_word(&mut self, token: i64, value: &str) -> Result<(), &str> {
     if token > 0 {
-      return Err("The argument must be a negative number".to_string());
+      return Err("The argument must be a negative number");
     }
     self.reserved_word.push(token, value);
     return Ok(());
   }
 
-  pub fn push_between_ward(&mut self, token: i64, value: &str) -> Result<(), String> {
+  pub fn push_between_ward(&mut self, token: i64, value: &str) -> Result<(), &str> {
     if token > 0 {
-      return Err("The argument must be a negative number".to_string());
+      return Err("The argument must be a negative number");
     }
     self.between_word.push(token, value);
     return Ok(());
   }
 
-  pub fn set_number_token(&mut self, token: i64) -> Result<(), String> {
+  pub fn set_number_token(&mut self, token: i64) -> Result<(), &str> {
     if token > 0 {
-      return Err("The argument must be a negative number".to_string());
+      return Err("The argument must be a negative number");
     }
 
     self.number_token = token;
     return Ok(());
   }
 
-  pub fn set_other_token(&mut self, token: i64) -> Result<(), String> {
+  pub fn set_other_token(&mut self, token: i64) -> Result<(), &str> {
     if token > 0 {
-      return Err("The argument must be a negative number".to_string());
+      return Err("The argument must be a negative number");
     }
 
     self.other_ward_token = token;
     return Ok(());
   }
 
-  pub fn push_one_word(&mut self, token: i64, value: &str) -> Result<(), String> {
+  pub fn push_one_word(&mut self, token: i64, value: &str) -> Result<(), &str> {
     if token > 0 {
-      return Err("The argument must be a negative number".to_string());
+      return Err("The argument must be a negative number");
     }
 
     self.one_word.push(token, value);

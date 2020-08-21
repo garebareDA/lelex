@@ -15,7 +15,7 @@ impl TokenToIssue{
     }
   }
 
-  pub(crate) fn get_tokens(&self) -> &Vec<Tokens>{
+  pub fn get_tokens(&self) -> &Vec<Tokens>{
     &self.tokens
   }
 
