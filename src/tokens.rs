@@ -15,8 +15,12 @@ impl TokenToIssue{
     }
   }
 
-  pub fn get_tokens(&self) -> &Vec<Tokens>{
+  pub(crate) fn get_tokens(&self) -> &Vec<Tokens>{
     &self.tokens
+  }
+
+  pub fn get_token(&self, num:usize) -> &Tokens{
+    &self.get_tokens()[num]
   }
 
   pub(crate) fn push(&mut self, token:i64, value:&str) {
