@@ -2,7 +2,7 @@ pub struct TokenToIssue{
   pub(crate) tokens:Vec<Tokens>
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Tokens{
   pub(crate) token: i64,
   pub(crate) value:String
